@@ -1,29 +1,17 @@
 import React,{useState, useEffect} from 'react';
 import Container from 'react-bootstrap/Container';
+import Spinner from 'react-bootstrap/Spinner';
 import Axios from 'axios';
 
 const Matched = () => {
 
     const [loading, setLoading] = useState(true);
-    const [matchedImages, setMatchedImages] = useState(`{
-        "https://i.imgur.com/TQwMnoT.jpg": [
-                "Zana Huan",
-                [
-                "https://i.imgur.com/CmOZsgq.jpg",
-                "https://i.imgur.com/CmOZsgq.jpg",
-                "https://i.imgur.com/CmOZsgq.jpg",
-                "https://i.imgur.com/CmOZsgq.jpg"
-                ]
-            ]
-        }`);
-    // const [matchedImages, setMatchedImages] = useState(null);
+    const [matchedImages, setMatchedImages] = useState(null);
 
     const renderMatchingImages = (image) => {
-        let MI = {};
         if(matchedImages == null) return;
-        else MI = JSON.parse(matchedImages);
-        console.log(MI[image][1]);
-        return MI[image][1].map((matchingImage) =>{
+        console.log(matchedImages[image][1]);
+        return matchedImages[image][1].map((matchingImage) =>{
             console.log(matchingImage);
             return(
                 <>
@@ -35,17 +23,15 @@ const Matched = () => {
     }
 
     const renderMatchedImages = () => {
-        let MI = {};
         if(matchedImages == null) return;
-        else MI = JSON.parse(matchedImages);
-        let matchingImages = Object.keys(MI);
+        let matchingImages = Object.keys(matchedImages);
         return matchingImages.map(image => {
                 return (
                     <div>
                         Matching Image : 
                         <img src={image} width="100px" height="100px"/>
                         <br/>
-                        Name : {MI[image][0]}
+                        Name : {matchedImages[image][0]}
                         <div>
                             {renderMatchingImages(image)}
                         </div>
@@ -56,17 +42,23 @@ const Matched = () => {
     }
 
     const renderLoding = () => {
-        return <div>Loading...</div>
+        return <Spinner animation="border" />
     }
 
     const getMatchedImages = async () => {
-        let result = await Axios.get("https://relice.herokuapp.com/getinfo");
-        return result;
+        try{
+            let result = await Axios.get("https://relice.herokuapp.com/getinfo");
+            return result;
+        } catch(e){
+            alert(e.message);
+            return {};
+        } 
+        
     }
 
     useEffect(() => {
         getMatchedImages()
-        .then((response) => setMatchedImages(response))
+        .then((response) => setMatchedImages(response.data))
         .then(() => setLoading(false))
         .catch(err => console.error(err));
     }, []);

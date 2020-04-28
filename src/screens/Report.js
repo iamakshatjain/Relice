@@ -15,11 +15,11 @@ const Report = () => {
             im_url : imageURL
         };
         console.log(data);
-        // const response = await Axios.post("https://relice.herokuapp.com/check", data);
+        const response = await Axios.post("https://relice.herokuapp.com/check", data);
 
-        // if(response.data.resp == "CMATCHED"){
-        //     alert("Image matched!");
-        // }
+        if(response.data.resp == "CMATCHED"){
+            alert("Image matched!");
+        }
     }
 
     const showWidget = () => {

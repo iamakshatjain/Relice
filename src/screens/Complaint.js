@@ -2,16 +2,17 @@ import React, {useState, useEffect} from 'react';
 import Button from 'react-bootstrap/Button';   
 import Container from 'react-bootstrap/Container';   
 import Form from 'react-bootstrap/Form'
+import Axios from 'axios';
 
 
 const Complaint = () => {
     const [name, setName] = useState('');
-    const [gender, setGender] = useState('Male');
+    const [gender, setGender] = useState('male');
     const [age, setAge] = useState(0);
     const [imageURL, setImageURL] = useState('');
     const [widget, setWidget] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const data = {
             name : name,
@@ -20,13 +21,13 @@ const Complaint = () => {
             age : age
         };
         console.log(data);
-        // const response = await Axios.post("https://relice.herokuapp.com/store", data);
-
-        // if (response.data.resp == "CADDED") {
-        //     alert("Your complaint is filed!");
-        // } else {
-        //     alert("Try again!");
-        // }
+        const response = await Axios.post("https://relice.herokuapp.com/store", data);
+        console.log(response.data);
+        if (response.data.resp == "CADDED") {
+            alert("Your complaint is filed!");
+        } else {
+            alert("Try again!");
+        }
     }
 
     const showWidget = () => {
@@ -62,8 +63,8 @@ const Complaint = () => {
                         <Form.Group controlId="user-gender">
                             <Form.Label>Gender</Form.Label>
                             <Form.Control as="select" value={gender} onChange={(e) => setGender(e.target.value)}>
-                                <option selected value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                <option selected value="male">Male</option>
+                                <option value="memale">Female</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="user-age">
