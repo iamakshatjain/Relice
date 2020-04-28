@@ -1,24 +1,57 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Button from 'react-bootstrap/Button';   
 import Container from 'react-bootstrap/Container';   
-import Figure from 'react-bootstrap/Figure';
-import Form from 'react-bootstrap/Form';
-
-const handleSubmit = (e) => {
-    e.preventDefault();
-}
+import Form from 'react-bootstrap/Form'
 
 
 const Complaint = () => {
     const [name, setName] = useState('');
-    const [gender, setGender] = useState('');
+    const [gender, setGender] = useState('Male');
     const [age, setAge] = useState(0);
     const [imageURL, setImageURL] = useState('');
+    const [widget, setWidget] = useState(null);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const data = {
+            name : name,
+            im_url : imageURL,
+            gender : gender,
+            age : age
+        };
+        console.log(data);
+        // const response = await Axios.post("https://relice.herokuapp.com/store", data);
+
+        // if (response.data.resp == "CADDED") {
+        //     alert("Your complaint is filed!");
+        // } else {
+        //     alert("Try again!");
+        // }
+    }
+
+    const showWidget = () => {
+        widget.open()
+    }
+
+    const checkUploadResult = (resultEvent) => {
+        if(resultEvent.event === 'success'){
+            console.log(resultEvent.info);
+            setImageURL(resultEvent.info.secure_url);
+        }
+    }
+
+    useEffect(()=>{
+        setWidget(window.cloudinary.createUploadWidget({
+            cloudName : 'whiteknight',
+            uploadPreset : 'b0z6jywd' 
+        }, (err, result) => {checkUploadResult(result)}));
+    }, []);
 
     return(
         <>
             <Container>
                 <Form onSubmit={handleSubmit} stye={{width : "100vw"}}>
+                    <Button variant="primary" onClick={showWidget}>Upload Image</Button>
                     <Form.Row>
                         <Form.Group controlId="user-name">
                             <Form.Label>Name</Form.Label>
@@ -29,7 +62,7 @@ const Complaint = () => {
                         <Form.Group controlId="user-gender">
                             <Form.Label>Gender</Form.Label>
                             <Form.Control as="select" value={gender} onChange={(e) => setGender(e.target.value)}>
-                                <option value="Male">Male</option>
+                                <option selected value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </Form.Control>
                         </Form.Group>
